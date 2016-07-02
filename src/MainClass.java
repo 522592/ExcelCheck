@@ -54,32 +54,35 @@ public class MainClass {
 	// 通过对应关系对新旧系统的数据进行比较
 	void ReadExcel() {
 		try {
-			String path = "F:\\数据\\738";
+			String path = "F:\\数据\\981";
 			if (!new File(path).exists()) {
 				System.out.println(String.format("目录不存在 %s", path));
 				return;
 			}
-			String fileName = path + "\\对应关系.xls";
-			File file = new File(fileName);
-			if (!file.exists()) {
-				System.out.println(String.format("关系文件不存在 %s", fileName));
-				return;
-			}
-			String fileName1 = path + "\\资产估值表_20160621_000738_001.xls";
+			String fileName1 = path + "\\资产估值表_20160621_000981_001.xls";
 			File file1 = new File(fileName1);
 			if (!file1.exists()) {
 				System.out.println(String.format("新系统文件不存在 %s", fileName1));
 				return;
 			}
-			String fileName2 = path + "\\资产估值表20160620-000738.xls";
+			String fileName2 = path + "\\资产估值表20160620-000981.xls";
 			File file2 = new File(fileName2);
 			if (!file2.exists()) {
 				System.out.println(String.format("旧系统文件不存在 %s", fileName2));
 				return;
 			}
-			Sheet sheet = Workbook.getWorkbook(file).getSheet(0);
 			Sheet sheet1 = Workbook.getWorkbook(file1).getSheet(0);
 			Sheet sheet2 = Workbook.getWorkbook(file2).getSheet(0);
+			String fileName = path + "\\对应关系.xls";
+			File file = new File(fileName);
+			if (!file.exists()) {
+				System.out.println(String.format("关系文件不存在 %s", fileName));
+				System.out.println("开始生成对应关系");
+				GenerateRelation(sheet1,sheet2,fileName);
+				System.out.println("对应关系生成完毕，请查看。");
+				return;
+			}
+			Sheet sheet = Workbook.getWorkbook(file).getSheet(0);
 			for (int i = 1; i < sheet.getRows(); i++) {
 				String code1 = sheet.getCell(1, i).getContents();
 				String code2 = sheet.getCell(4, i).getContents();
@@ -119,7 +122,12 @@ public class MainClass {
 			e.printStackTrace();
 		}
 	}
-
+/**
+ * 生成对应关系
+ * @param sheet1 新系统表格
+ * @param sheet2 旧系统表格
+ * @param fileName 对应关系文件全名
+ */
 	void GenerateRelation(Sheet sheet1, Sheet sheet2, String fileName) {
 		List<String> list1 = FindCodes(sheet1, 4, 0);
 		List<String> list2 = FindCodes(sheet2, 5, 1);
@@ -154,6 +162,7 @@ public class MainClass {
 			workbook.close();
 			os.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
